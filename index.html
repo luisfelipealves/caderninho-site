@@ -6,34 +6,225 @@
   <link rel="icon" href="favicon.ico" sizes="any" />
   <link rel="icon" type="image/png" href="logo.png" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-  <title>Caderninho de Receitas</title>
-  <meta name="description" content="Receitas, inventário e custos de cozinha — tudo no seu computador. App local-first para Windows." />
+  <title>Caderninho de Receitas — receitas, inventário e custos de cozinha</title>
+  <meta name="description" content="Receitas, inventário e custos de cozinha — tudo no seu computador. App local-first para Windows: sem contas, sem nuvem, sem telemetria." />
+  <meta property="og:title" content="Caderninho de Receitas" />
+  <meta property="og:description" content="Receitas, inventário e custos de cozinha — tudo no seu computador." />
+  <meta property="og:image" content="https://luisfelipealves.github.io/caderninho-site/shots/inicio.png" />
   <style>
-    :root { color-scheme: light; }
-    body {
-      margin: 0 auto; max-width: 44rem; padding: 3.5rem 1.5rem 4rem;
-      font: 1rem/1.65 system-ui, -apple-system, "Segoe UI", sans-serif;
-      background: #f5ead8; color: #201e1d; text-align: center;
+    :root {
+      color-scheme: light;
+      --bg: #f5ead8; --card: #f9f4ed; --ink: #201e1d;
+      --terra: #c67139; --terra-escuro: #a85a28; --suave: #6b5f52;
     }
-    img.logo { width: 128px; height: 128px; border-radius: 24px; }
-    h1 { font-size: 1.8rem; color: #c67139; margin-bottom: 0.25rem; }
-    p.tagline { font-size: 1.1rem; color: #6b5f52; margin-top: 0; }
-    .links { margin-top: 2.5rem; }
-    .links a { color: #c67139; margin: 0 0.75rem; }
-    footer { margin-top: 4rem; font-size: 0.9rem; color: #6b5f52; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; background: var(--bg); color: var(--ink);
+      font: 1rem/1.65 system-ui, -apple-system, "Segoe UI", sans-serif;
+      overflow-x: hidden;
+    }
+    .pagina { position: relative; z-index: 1; }
+
+    /* ── cupcakes decorativos ─────────────────────────── */
+    .deco { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+    .cup { position: absolute; opacity: 0.13; }
+
+    /* ── hero ─────────────────────────────────────────── */
+    header { text-align: center; padding: 4rem 1.5rem 1rem; position: relative; }
+    .logo { width: 108px; height: 108px; border-radius: 22px; box-shadow: 0 10px 28px rgba(32,30,29,0.18); }
+    h1 { font-size: clamp(2rem, 5vw, 3rem); color: var(--terra); margin: 1.2rem 0 0.3rem; }
+    .tagline { font-size: clamp(1.05rem, 2.5vw, 1.3rem); color: var(--suave); margin: 0 auto; max-width: 34rem; }
+    .badge {
+      display: inline-block; margin-top: 1.4rem; padding: 0.5rem 1.1rem;
+      background: var(--ink); color: var(--card); border-radius: 999px;
+      font-size: 0.92rem; letter-spacing: 0.02em;
+    }
+    .janela {
+      max-width: 62rem; margin: 2.8rem auto 0; padding: 0 1.5rem; position: relative;
+    }
+    .moldura {
+      background: #efe3cc; border-radius: 16px; padding: 0.65rem 0.65rem 0;
+      box-shadow: 0 30px 70px rgba(32,30,29,0.25);
+    }
+    .moldura .pontos { display: flex; gap: 6px; padding: 2px 6px 8px; }
+    .moldura .pontos i { width: 10px; height: 10px; border-radius: 50%; background: #d9c3a6; }
+    .moldura img { width: 100%; display: block; border-radius: 10px 10px 14px 14px; }
+
+    /* ── funcionalidades ──────────────────────────────── */
+    section { position: relative; }
+    .miolo { max-width: 62rem; margin: 0 auto; padding: 4rem 1.5rem; }
+    h2 { font-size: clamp(1.5rem, 3.5vw, 2rem); margin: 0 0 2rem; text-align: center; }
+    .grelha { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem; }
+    .cartao {
+      background: var(--card); border-radius: 16px; padding: 1.4rem 1.5rem;
+      box-shadow: 0 4px 14px rgba(32,30,29,0.06);
+    }
+    .cartao .ico { font-size: 1.6rem; }
+    .cartao h3 { margin: 0.5rem 0 0.3rem; font-size: 1.05rem; }
+    .cartao p { margin: 0; color: var(--suave); font-size: 0.95rem; }
+
+    /* ── montras alternadas ───────────────────────────── */
+    .montra {
+      display: flex; align-items: center; gap: 2.5rem; flex-wrap: wrap;
+      margin-bottom: 4rem;
+    }
+    .montra:last-child { margin-bottom: 0; }
+    .montra.inversa { flex-direction: row-reverse; }
+    .montra .texto { flex: 1 1 240px; }
+    .montra .texto h3 { font-size: 1.35rem; color: var(--terra-escuro); margin: 0 0 0.5rem; }
+    .montra .texto p { color: var(--suave); margin: 0; }
+    .montra .imagem { flex: 1 1 380px; }
+    .montra .imagem img {
+      width: 100%; display: block; border-radius: 14px;
+      box-shadow: 0 18px 44px rgba(32,30,29,0.18);
+    }
+
+    /* ── privacidade ──────────────────────────────────── */
+    .privacidade {
+      background: var(--ink); color: var(--card); border-radius: 22px;
+      padding: 2.5rem 2rem; text-align: center;
+    }
+    .privacidade h2 { color: #ffe1d0; margin-bottom: 0.8rem; }
+    .privacidade p { max-width: 38rem; margin: 0 auto; color: #d9cec1; }
+    .privacidade a { color: #e8a06c; }
+
+    footer { text-align: center; padding: 3rem 1.5rem 3.5rem; color: var(--suave); font-size: 0.92rem; position: relative; }
+    footer a { color: var(--terra); margin: 0 0.5rem; }
   </style>
 </head>
 <body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="cupcake">
+      <!-- forminha -->
+      <path d="M 20 55 L 80 55 L 71 95 Q 50 100 29 95 Z" fill="#c67139"/>
+      <path d="M 33 57 L 38 95 M 50 57 V 97 M 67 57 L 62 95" stroke="#a85a28" stroke-width="4" fill="none"/>
+      <!-- cobertura -->
+      <circle cx="32" cy="45" r="15" fill="#f9f4ed"/>
+      <circle cx="68" cy="45" r="15" fill="#f9f4ed"/>
+      <circle cx="50" cy="34" r="19" fill="#f9f4ed"/>
+      <rect x="20" y="45" width="60" height="12" rx="6" fill="#f9f4ed"/>
+      <!-- cereja -->
+      <circle cx="50" cy="14" r="7" fill="#a33b2e"/>
+      <path d="M 50 8 Q 54 2 58 4" stroke="#4a5d3a" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </g>
+  </defs>
+</svg>
+
+<div class="pagina">
+
+<header>
+  <div class="deco" aria-hidden="true">
+    <svg class="cup" style="top:6%;left:6%;width:90px;transform:rotate(-14deg)" viewBox="0 0 100 100"><use href="#cupcake"/></svg>
+    <svg class="cup" style="top:40%;left:16%;width:56px;transform:rotate(10deg)" viewBox="0 0 100 100"><use href="#cupcake"/></svg>
+    <svg class="cup" style="top:10%;right:7%;width:74px;transform:rotate(12deg)" viewBox="0 0 100 100"><use href="#cupcake"/></svg>
+    <svg class="cup" style="top:44%;right:14%;width:48px;transform:rotate(-9deg)" viewBox="0 0 100 100"><use href="#cupcake"/></svg>
+  </div>
   <img class="logo" src="logo.png" alt="Logo do Caderninho de Receitas" />
   <h1>Caderninho de Receitas</h1>
-  <p class="tagline">Receitas, inventário e custos de cozinha — tudo no seu computador.</p>
-  <p>Uma aplicação <em>local-first</em> para Windows: sem contas, sem nuvem, sem telemetria.
-  Os seus dados são seus.</p>
-  <div class="links">
-    <a href="privacidade.html">Política de Privacidade</a> ·
-    <a href="privacy.html">Privacy Policy</a> ·
-    <a href="mailto:caderninho-de-receitas@outlook.com">Contacto</a>
+  <p class="tagline">Receitas, inventário e custos de cozinha — tudo no seu computador, ao seu gosto.</p>
+  <span class="badge">🧁 Brevemente na Microsoft Store</span>
+
+  <div class="janela">
+    <div class="moldura">
+      <div class="pontos"><i></i><i></i><i></i></div>
+      <img src="shots/inicio.png" alt="Painel do Caderninho de Receitas com pedidos abertos, entregas da semana e lucro previsto" />
+    </div>
   </div>
-  <footer>© 2026 Caderninho de Receitas</footer>
+</header>
+
+<section>
+  <div class="miolo">
+    <h2>Tudo o que a sua cozinha precisa de saber</h2>
+    <div class="grelha">
+      <div class="cartao">
+        <div class="ico">📖</div>
+        <h3>Fichas técnicas</h3>
+        <p>Cada receita com custo total, custo por dose e margem calculados automaticamente.</p>
+      </div>
+      <div class="cartao">
+        <div class="ico">📦</div>
+        <h3>Inventário esperto</h3>
+        <p>Stock por ingrediente, alertas de falta e leitura de faturas com IA para registar compras.</p>
+      </div>
+      <div class="cartao">
+        <div class="ico">🧾</div>
+        <h3>Pedidos e entregas</h3>
+        <p>Encomendas com estado, datas de entrega, PDFs para o cliente e lucro por pedido.</p>
+      </div>
+      <div class="cartao">
+        <div class="ico">📊</div>
+        <h3>Financeiro claro</h3>
+        <p>Receita vs. gastos, ticket médio e exportação CSV — o mês inteiro num relance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="miolo">
+    <div class="deco" aria-hidden="true">
+      <svg class="cup" style="top:2%;right:2%;width:64px;transform:rotate(8deg)" viewBox="0 0 100 100"><use href="#cupcake"/></svg>
+      <svg class="cup" style="top:38%;left:1%;width:52px;transform:rotate(-11deg)" viewBox="0 0 100 100"><use href="#cupcake"/></svg>
+      <svg class="cup" style="bottom:4%;right:4%;width:78px;transform:rotate(-6deg)" viewBox="0 0 100 100"><use href="#cupcake"/></svg>
+    </div>
+
+    <div class="montra">
+      <div class="texto">
+        <h3>Saiba quanto custa cada dose</h3>
+        <p>A ficha técnica soma os ingredientes ao preço atual e mostra a margem sobre o preço de venda. Quando um ingrediente encarece, as receitas refletem-no na hora.</p>
+      </div>
+      <div class="imagem"><img src="shots/receitas.png" alt="Ecrã de receitas com fichas técnicas, custos e margens" loading="lazy" /></div>
+    </div>
+
+    <div class="montra inversa">
+      <div class="texto">
+        <h3>Stock sem surpresas</h3>
+        <p>Registe compras a partir da fatura — uma fotografia chega — e veja em que receitas cada ingrediente é usado antes de faltar.</p>
+      </div>
+      <div class="imagem"><img src="shots/ingredientes.png" alt="Ecrã de ingredientes com stock, preços e custo unitário" loading="lazy" /></div>
+    </div>
+
+    <div class="montra">
+      <div class="texto">
+        <h3>Pedidos com lucro à vista</h3>
+        <p>Cada encomenda mostra custo de produção, lucro e margem. Confirme, entregue e exporte o resumo em PDF para o cliente.</p>
+      </div>
+      <div class="imagem"><img src="shots/pedidos.png" alt="Ecrã de pedidos com estado, totais e detalhe do cliente" loading="lazy" /></div>
+    </div>
+
+    <div class="montra inversa">
+      <div class="texto">
+        <h3>O mês num relance</h3>
+        <p>Receita, gastos em compras, custo de produção e lucro estimado — com gráfico diário e exportação CSV para a contabilidade.</p>
+      </div>
+      <div class="imagem"><img src="shots/financeiro.png" alt="Ecrã financeiro com receita vs. gastos e últimas compras" loading="lazy" /></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="miolo">
+    <div class="privacidade">
+      <h2>Os seus dados são seus. Literalmente.</h2>
+      <p>O Caderninho é <em>local-first</em>: sem contas, sem nuvem, sem telemetria. Tudo o que escreve fica no seu computador — e sai de lá apenas se você exportar. <a href="privacidade.html">Leia a política de privacidade</a>.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="deco" aria-hidden="true">
+    <svg class="cup" style="bottom:8%;left:10%;width:44px;transform:rotate(-15deg)" viewBox="0 0 100 100"><use href="#cupcake"/></svg>
+    <svg class="cup" style="bottom:10%;right:9%;width:58px;transform:rotate(9deg)" viewBox="0 0 100 100"><use href="#cupcake"/></svg>
+  </div>
+  © 2026 Caderninho de Receitas<br />
+  <a href="privacidade.html">Política de Privacidade</a> ·
+  <a href="privacy.html">Privacy Policy</a> ·
+  <a href="mailto:caderninho-de-receitas@outlook.com">Contacto</a>
+</footer>
+
+</div>
 </body>
 </html>

@@ -6,10 +6,10 @@
   <link rel="icon" href="favicon.ico" sizes="any" />
   <link rel="icon" type="image/png" href="logo.png" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-  <title>Caderninho de Receitas — receitas, inventário e custos de cozinha</title>
-  <meta name="description" content="Receitas, inventário e custos de cozinha — tudo no seu computador. App local-first para Windows: sem contas, sem nuvem, sem telemetria." />
-  <meta property="og:title" content="Caderninho de Receitas" />
-  <meta property="og:description" content="Receitas, inventário e custos de cozinha — tudo no seu computador." />
+  <title>Caderninho de Custos — calcule o custo dos ingredientes antes de vender</title>
+  <meta name="description" content="Para quem cozinha para vender: calcule o custo dos ingredientes de cada receita e por unidade. Organize também compras e encomendas, no seu computador Windows." />
+  <meta property="og:title" content="Caderninho de Custos" />
+  <meta property="og:description" content="Saiba quanto gasta em ingredientes por receita e por unidade antes de vender." />
   <meta property="og:image" content="https://luisfelipealves.github.io/caderninho-site/shots/inicio.png" />
   <style>
     :root {
@@ -35,6 +35,26 @@
     .logo { width: 108px; height: 108px; border-radius: 22px; box-shadow: 0 10px 28px rgba(32,30,29,0.18); }
     h1 { font-size: clamp(2rem, 5vw, 3rem); color: var(--terra); margin: 1.2rem 0 0.3rem; }
     .tagline { font-size: clamp(1.05rem, 2.5vw, 1.3rem); color: var(--suave); margin: 0 auto; max-width: 34rem; }
+    .marca { color: var(--suave); font-weight: 600; margin-top: 1.4rem; }
+    h1 { max-width: 48rem; margin-left: auto; margin-right: auto; color: var(--terra-escuro); line-height: 1.2; }
+    .acao { display: inline-block; padding: 0.8rem 1.3rem; border-radius: 999px; background: var(--ink); color: var(--card); font-weight: 600; text-decoration: none; }
+    a:focus-visible { outline: 3px solid var(--terra-escuro); outline-offset: 5px; }
+    .passos { padding-left: 1.5rem; }
+    .passos li { margin-bottom: 0.8rem; }
+    .exemplo { background: var(--card); border-radius: 16px; padding: 1.5rem; margin-top: 2rem; }
+    .exemplo h3 { margin-top: 0; }
+    .exemplo strong { color: var(--terra-escuro); }
+    .nota { color: var(--suave); }
+    .miolo { scroll-margin-top: 1rem; }
+    .montra > * { min-width: 0; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    @media (max-width: 480px) {
+      header { padding: 2rem 1rem 1rem; }
+      .janela { padding: 0; }
+      .miolo { padding: 2.5rem 1rem; }
+      .grelha { grid-template-columns: 1fr; }
+      .montra .imagem { flex-basis: 100%; }
+    }
     .badge {
       display: inline-block; margin-top: 1.4rem; padding: 0.5rem 1.1rem;
       background: var(--ink); color: var(--card); border-radius: 999px;
@@ -62,7 +82,7 @@
     }
     .cartao .ico { font-size: 1.6rem; }
     .cartao h3 { margin: 0.5rem 0 0.3rem; font-size: 1.05rem; }
-    .cartao p { margin: 0; color: var(--suave); font-size: 0.95rem; }
+    .cartao p { margin: 0; color: var(--suave); font-size: 1rem; }
 
     /* ── montras alternadas ───────────────────────────── */
     .montra {
@@ -90,7 +110,7 @@
     .privacidade a { color: #e8a06c; }
 
     footer { text-align: center; padding: 3rem 1.5rem 3.5rem; color: var(--suave); font-size: 0.92rem; position: relative; }
-    footer a { color: var(--terra); margin: 0 0.5rem; }
+    footer a { color: var(--terra-escuro); margin: 0 0.5rem; }
   </style>
 </head>
 <body>
@@ -122,27 +142,46 @@
     <svg class="cup" style="top:10%;right:7%;width:74px;transform:rotate(12deg)" viewBox="0 0 100 100"><use href="#cupcake"/></svg>
     <svg class="cup" style="top:44%;right:14%;width:48px;transform:rotate(-9deg)" viewBox="0 0 100 100"><use href="#cupcake"/></svg>
   </div>
-  <img class="logo" src="logo.png" alt="Logo do Caderninho de Receitas" />
-  <h1>Caderninho de Receitas</h1>
-  <p class="tagline">Receitas, inventário e custos de cozinha — tudo no seu computador, ao seu gosto.</p>
-  <span class="badge">🧁 Brevemente na Microsoft Store</span>
+  <img class="logo" src="logo.png" alt="Logo do Caderninho de Custos" />
+  <p class="marca">Caderninho de Custos · Para quem cozinha para vender</p>
+  <h1>Quanto custa fazer a sua receita?</h1>
+  <p class="tagline">Introduza os preços das embalagens, as quantidades usadas e quanto rende a receita. Veja o custo dos ingredientes por receita e por unidade — seja um bolo, um salgado ou uma refeição.</p>
+  <p><a class="acao" href="#como-funciona">Veja como calcular</a></p>
+  <span class="badge">Para Windows · Brevemente na Microsoft Store</span>
 
   <div class="janela">
     <div class="moldura">
       <div class="pontos"><i></i><i></i><i></i></div>
-      <img src="shots/inicio.png" alt="Painel do Caderninho de Receitas com pedidos abertos, entregas da semana e lucro previsto" />
+      <img src="shots/ingredientes.png" alt="Ingredientes na app, com preços das embalagens e custo por unidade de medida" />
     </div>
   </div>
 </header>
 
+<main>
+<section aria-labelledby="calculo-titulo">
+  <div class="miolo" id="como-funciona">
+    <h2 id="calculo-titulo">Da embalagem ao custo de cada unidade</h2>
+    <ol class="passos">
+      <li><strong>Registe os ingredientes.</strong> Indique o preço e a quantidade da embalagem que comprou.</li>
+      <li><strong>Monte a receita.</strong> Escolha os ingredientes e indique a quantidade usada de cada um, na unidade registada.</li>
+      <li><strong>Indique quanto rende.</strong> A app soma o custo dos ingredientes e calcula o custo por unidade de rendimento.</li>
+    </ol>
+    <div class="exemplo">
+      <h3>Por exemplo: uma receita de 20 salgados</h3>
+      <p>Se os ingredientes usados custam <strong>12 €</strong> e a receita rende <strong>20 salgados</strong>, cada salgado tem um custo de ingredientes de <strong>0,60 €</strong>.</p>
+      <p class="nota">Exemplo ilustrativo. Este é o custo dos ingredientes: antes de definir o preço de venda, considere também embalagens de venda, o seu tempo, energia e outras despesas. A app ainda não calcula essas parcelas separadamente.</p>
+    </div>
+  </div>
+</section>
+
 <section>
   <div class="miolo">
-    <h2>Tudo o que a sua cozinha precisa de saber</h2>
+    <h2>Depois do cálculo, organize o dia a dia</h2>
     <div class="grelha">
       <div class="cartao">
         <div class="ico">📖</div>
         <h3>Fichas técnicas</h3>
-        <p>Cada receita com custo total, custo por dose e margem calculados automaticamente.</p>
+        <p>Guarde as quantidades de cada ingrediente e o rendimento. Consulte o custo dos ingredientes da receita e de cada unidade.</p>
       </div>
       <div class="cartao">
         <div class="ico">📦</div>
@@ -152,12 +191,12 @@
       <div class="cartao">
         <div class="ico">🧾</div>
         <h3>Pedidos e entregas</h3>
-        <p>Encomendas com estado, datas de entrega, PDFs para o cliente e lucro por pedido.</p>
+        <p>Organize encomendas, acompanhe as datas de entrega e exporte um resumo em PDF para o cliente.</p>
       </div>
       <div class="cartao">
         <div class="ico">📊</div>
         <h3>Financeiro claro</h3>
-        <p>Receita vs. gastos, ticket médio e exportação CSV — o mês inteiro num relance.</p>
+        <p>Consulte os valores de venda e as compras registadas, com gráficos e exportação CSV.</p>
       </div>
     </div>
   </div>
@@ -174,7 +213,7 @@
     <div class="montra">
       <div class="texto">
         <h3>Saiba quanto custa cada dose</h3>
-        <p>A ficha técnica soma os ingredientes ao preço atual e mostra a margem sobre o preço de venda. Quando um ingrediente encarece, as receitas refletem-no na hora.</p>
+        <p>A ficha técnica soma o custo das quantidades usadas e divide-o pelo rendimento. Quando atualiza o preço de um ingrediente, o cálculo das receitas acompanha essa alteração.</p>
       </div>
       <div class="imagem"><img src="shots/receitas.png" alt="Ecrã de receitas com fichas técnicas, custos e margens" loading="lazy" /></div>
     </div>
@@ -182,15 +221,15 @@
     <div class="montra inversa">
       <div class="texto">
         <h3>Stock sem surpresas</h3>
-        <p>Registe compras a partir da fatura — uma fotografia chega — e veja em que receitas cada ingrediente é usado antes de faltar.</p>
+        <p>Registe as compras manualmente ou use a leitura opcional de faturas com IA. Reveja os produtos, as quantidades e os preços antes de confirmar.</p>
       </div>
       <div class="imagem"><img src="shots/ingredientes.png" alt="Ecrã de ingredientes com stock, preços e custo unitário" loading="lazy" /></div>
     </div>
 
     <div class="montra">
       <div class="texto">
-        <h3>Pedidos com lucro à vista</h3>
-        <p>Cada encomenda mostra custo de produção, lucro e margem. Confirme, entregue e exporte o resumo em PDF para o cliente.</p>
+        <h3>Encomendas e entregas organizadas</h3>
+        <p>Registe o que o cliente encomendou, o preço e a data de entrega. Acompanhe o estado do pedido e exporte o resumo em PDF.</p>
       </div>
       <div class="imagem"><img src="shots/pedidos.png" alt="Ecrã de pedidos com estado, totais e detalhe do cliente" loading="lazy" /></div>
     </div>
@@ -198,7 +237,7 @@
     <div class="montra inversa">
       <div class="texto">
         <h3>O mês num relance</h3>
-        <p>Receita, gastos em compras, custo de produção e lucro estimado — com gráfico diário e exportação CSV para a contabilidade.</p>
+        <p>Acompanhe vendas e compras registadas, com gráfico diário e exportação CSV. As estimativas de custo usam os preços atuais dos ingredientes e não incluem as restantes despesas do negócio.</p>
       </div>
       <div class="imagem"><img src="shots/financeiro.png" alt="Ecrã financeiro com receita vs. gastos e últimas compras" loading="lazy" /></div>
     </div>
@@ -209,17 +248,19 @@
   <div class="miolo">
     <div class="privacidade">
       <h2>Os seus dados são seus. Literalmente.</h2>
-      <p>O Caderninho é <em>local-first</em>: sem contas, sem nuvem, sem telemetria. Tudo o que escreve fica no seu computador — e sai de lá apenas se você exportar. <a href="privacidade.html">Leia a política de privacidade</a>.</p>
+      <p>As receitas e os registos ficam guardados no seu computador, sem precisar de criar conta. Pode exportar cópias de segurança. A leitura opcional de faturas envia a imagem ao Google Gemini; a pesquisa de produtos envia o código de barras ao Open Food Facts. <a href="privacidade.html">Saiba como são tratados os seus dados</a>.</p>
     </div>
   </div>
 </section>
+
+</main>
 
 <footer>
   <div class="deco" aria-hidden="true">
     <svg class="cup" style="bottom:8%;left:10%;width:44px;transform:rotate(-15deg)" viewBox="0 0 100 100"><use href="#cupcake"/></svg>
     <svg class="cup" style="bottom:10%;right:9%;width:58px;transform:rotate(9deg)" viewBox="0 0 100 100"><use href="#cupcake"/></svg>
   </div>
-  © 2026 Caderninho de Receitas<br />
+  © 2026 Caderninho de Custos<br />
   <a href="privacidade.html">Política de Privacidade</a> ·
   <a href="privacy.html">Privacy Policy</a> ·
   <a href="mailto:caderninho-de-receitas@outlook.com">Contacto</a>

@@ -4,7 +4,11 @@
 
 [Visit the live site](https://luisfelipealves.github.io/caderninho-site/) · [Privacy policy (PT)](privacidade.html) · [Privacy policy (EN)](privacy.html)
 
-![Caderninho ingredient screen](shots/ingredientes.png)
+![Current Caderninho site, desktop browser viewport](screenshots/site-desktop.png)
+
+*Current landing page captured in an automated Chromium desktop viewport. Product screens further below are illustrative assets on the site.*
+
+![Caderninho site, mobile browser viewport](screenshots/site-mobile.png)
 
 ## What visitors can explore
 

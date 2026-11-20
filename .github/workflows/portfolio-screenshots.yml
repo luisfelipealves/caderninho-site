@@ -1,0 +1,33 @@
+name: Portfolio screenshots (browser viewport)
+on:
+  push:
+    branches: [docs/emulator-screenshots-20261120]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  capture:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start static site
+        run: |
+          python3 -m http.server 8000 --bind 127.0.0.1 > /tmp/caderninho-site.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8000/ >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          exit 1
+      - name: Capture desktop and mobile viewport
+        run: |
+          npx --yes playwright@1.56.1 install --with-deps chromium
+          mkdir -p screenshots
+          npx --yes playwright@1.56.1 screenshot --browser chromium --viewport-size "1440,900" --wait-for-timeout 2000 http://127.0.0.1:8000/ screenshots/site-desktop.png
+          npx --yes playwright@1.56.1 screenshot --browser chromium --viewport-size "390,844" --wait-for-timeout 2000 http://127.0.0.1:8000/ screenshots/site-mobile.png
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: caderninho-site-browser-viewport-screenshots
+          path: screenshots/*.png
+          if-no-files-found: error
